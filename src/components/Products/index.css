@@ -1,0 +1,23 @@
+.mr-50{
+    margin-left: 500px;
+    
+}
+
+.inline {
+    display: flex;
+}
+
+.mr-10{
+    margin-left: 2px;
+}
+
+.button-mg {
+    margin-right: 10px;
+}
+
+.css-label {
+    /* margin-left: 150px; */
+    text-align: center;
+    font-style: bold;
+    font-size: 40px;
+}
