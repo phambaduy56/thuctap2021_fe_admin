@@ -7,7 +7,8 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux'
 import { useEffect } from 'react';
-import { listProduct, editProduct } from './../../actions/index';
+import { listProduct, deleteProduct } from './../../actions/index';
+import NumberFormat from 'react-number-format';
 
 function ListProduct(props) {
 
@@ -18,16 +19,16 @@ function ListProduct(props) {
                 props.getProduct(res.data.product)
             })
 
-    });
+    }, []);
 
     const onDeleteProduct = (id) => {
         if (window.confirm('Are you sure you want to delete!')) {
             axios.delete(`/api/deleteProduct/${id}`)
                 .then(res => {
-
+                    console.log(res.data);
                 })
+            props.deleteProduct(id);
         }
-
     }
 
 
@@ -39,15 +40,26 @@ function ListProduct(props) {
 
                     <tr key={index}>
                         <td>{p.name_product}</td>
-                        <td>{p.price}</td>
-                        <td>{p.discount}</td>
+                        <td>
+                            <NumberFormat displayType={'text'}
+                                suffix='đ'
+                                thousandSeparator={true}
+                                value={p.price} />
+                        </td>
+                        <td>
+                            <NumberFormat displayType={'text'}
+                                suffix='đ'
+                                thousandSeparator={true}
+                                value={p.discount} />
+                        </td>
+                        <td>{p.description}</td>
                         <td>{p.qty}</td>
                         <td>
-                            <Link className="btn btn-success mr-10" to="/EditProduct" onClick={() => onEditProduct(p)} >
-                                <span><i class="fas fa-edit"></i></span> Sửa
+                            <Link className="btn btn-success mr-10" to={`/EditProduct/${p._id}`}>
+                                <span><i className="fas fa-edit"></i></span> Sửa
                             </Link>
                             <Button variant="danger" className="mr-10" onClick={() => onDeleteProduct(p._id)}>
-                                <span><i class="fas fa-trash-alt"></i></span> Xóa
+                                <span><i className="fas fa-trash-alt"></i></span> Xóa
                             </Button>
                         </td>
                     </tr>
@@ -69,7 +81,7 @@ function ListProduct(props) {
                 <Row>
                     <Col>
                         <Link className="btn btn-lg btn-primary" to="/AddProduct" >
-                            <span><i class="fas fa-plus-circle"></i></span> Thêm sản phẩm
+                            <span><i className="fas fa-plus-circle"></i></span> Thêm sản phẩm
                         </Link>
                         <br /><br />
                         <div className="panel panel-primary">
@@ -83,6 +95,7 @@ function ListProduct(props) {
                                             <th>Tên sản phẩm</th>
                                             <th>Giá sản phẩm</th>
                                             <th>Giảm giá</th>
+                                            <th>Mô tả</th>
                                             <th>Số lượng</th>
                                             <th>Hành động</th>
                                         </tr>
@@ -113,8 +126,8 @@ const mapDispatchToProps = (dispatch) => {
         getProduct: (product) => {
             dispatch(listProduct(product))
         },
-        editProduct: (id) => {
-            dispatch(editProduct(id))
+        deleteProduct: (id) => {
+            dispatch(deleteProduct(id))
         }
     }
 }

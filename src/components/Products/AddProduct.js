@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom'
+import { isEmpty} from 'validate.js';
+
 
 function AddProduct(props) {
 
@@ -13,10 +15,13 @@ function AddProduct(props) {
         price: null,
         discount: null,
         qty: null,
+        description: '',
         category_id: '',
         productPictures: []
     })
     const [productPictures, setProductPictures] = useState([])
+
+    const [validationMsg, setvalidationMsg] = useState("")
 
     useEffect(() => {
 
@@ -26,6 +31,38 @@ function AddProduct(props) {
             });
 
     }, [])
+
+    const validateAll = () => {
+        const msg = {}
+
+        if (isEmpty(product.name_product)) {
+            msg.name_product = "không được để trống"
+        }
+
+        if (isEmpty(product.price)) {
+            msg.price = "không được để trống"
+        }
+
+        if (isEmpty(product.discount)) {
+            msg.discount = "không được để trống"
+        }
+
+        if (isEmpty(product.qty)) {
+            msg.qty = "không được để trống"
+        }
+
+        if (isEmpty(product.description)) {
+            msg.description = "không được để trống"
+        }
+
+        if (isEmpty(product.productPictures)) {
+            msg.productPictures = "không được để trống"
+        }
+
+        setvalidationMsg(msg)
+        if (Object.keys(msg).length > 0) return false
+        return true
+    };
 
     const getCategory = (category) => {
         var result = null;
@@ -49,22 +86,28 @@ function AddProduct(props) {
 
     const onSubmit = (e) => {
         e.preventDefault();
+        const isvalid = validateAll()
+        if (isvalid) {
 
-        const form = new FormData();
-        form.append('category_id', product.category_id);
-        form.append('name_product', product.name_product);
-        form.append('price', product.price);
-        form.append('discount', product.discount);
-        form.append('qty', product.qty);
+            const form = new FormData();
+            form.append('category_id', product.category_id);
+            form.append('name_product', product.name_product);
+            form.append('price', product.price);
+            form.append('discount', product.discount);
+            form.append('qty', product.qty);
+            form.append('description', product.description);
 
-        for (let pic of productPictures) {
-            form.append('productPictures', pic);
+
+            for (let pic of productPictures) {
+                form.append('productPictures', pic);
+            }
+
+            axios.post('/api/postProduct', form)
+                .then(res => {
+                    alert(res.data.message);
+                })
         }
 
-        axios.post('/api/postProduct', form)
-            .then(res => {
-                alert(res.data.message);
-            })
     }
 
     const handlePickImage = (e) => {
@@ -88,42 +131,58 @@ function AddProduct(props) {
                         className="form-control"
                         name="name_product"
                         onChange={(e) => setProduct({ ...product, name_product: e.target.value })}
-                        value={product.name_product}
+                        value={product.name_product || ""}
                         placeholder="Vd. vòng cổ kim cương...," />
-
+                    <small className="form-text text-danger">{validationMsg.name_product}</small>
                 </div>
                 <br />
                 <div className="form-group">
                     <label >Giá sản phẩm</label>
                     <br />
-                    <input type="text"
+                    <input type="number"
                         className="form-control"
                         name="price"
-                        value={product.price}
+                        value={product.price || ""}
                         onChange={(e) => setProduct({ ...product, price: e.target.value })}
                         placeholder="Input field" />
+                    <small className="form-text text-danger">{validationMsg.price}</small>
                 </div>
                 <br />
                 <div className="form-group">
                     <label >Giảm giá</label>
                     <br />
-                    <input type="text"
+                    <input type="number"
                         className="form-control"
                         name="discount"
-                        value={product.discount}
+                        value={product.discount || ""}
                         onChange={(e) => setProduct({ ...product, discount: e.target.value })}
                         placeholder="Input field" />
+                    <small className="form-text text-danger">{validationMsg.discount}</small>
                 </div>
                 <br />
                 <div className="form-group">
                     <label >Số lượng</label>
                     <br />
-                    <input type="text"
+                    <input type="number"
                         className="form-control"
                         name="qty"
-                        value={product.qty}
+                        value={product.qty || ""}
                         onChange={(e) => setProduct({ ...product, qty: e.target.value })}
                         placeholder="Input field" />
+                    <small className="form-text text-danger">{validationMsg.qty}</small>
+                </div>
+                <br />
+
+                <div className="form-group">
+                    <label >Mô tả</label>
+                    <br />
+                    <input type="text"
+                        className="form-control"
+                        name="description"
+                        value={product.description || ""}
+                        onChange={(e) => setProduct({ ...product, description: e.target.value })}
+                        placeholder="Input field" />
+                    <small className="form-text text-danger">{validationMsg.description}</small>
                 </div>
                 <br />
 
@@ -143,15 +202,16 @@ function AddProduct(props) {
                     type="file"
                     name="productPictures"
                     onChange={handlePickImage} />
+                    <small className="form-text text-danger">{validationMsg.productPictures}</small>
                 <br />
                 <button type="submit" className="btn btn-primary button-mg">
-                   <span><i class="fas fa-download css-icon"></i></span> Thêm
+                    <span><i className="fas fa-download css-icon"></i></span> Thêm
                 </button>
                 <Link type="button"
                     className="btn btn-primary"
                     to="/listProduct"
                 >
-                  <span><i class="fas fa-arrow-left css-icon"></i></span>  Quay lại
+                    <span><i className="fas fa-arrow-left css-icon"></i></span>  Quay lại
                 </Link>
 
             </form>

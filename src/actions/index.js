@@ -44,3 +44,10 @@ export const editProduct = (id) => {
         id
     }
 }
+
+export const deleteProduct = (id) => {
+    return {
+        type: Types.DELETE_PRODUCT,
+        id,
+    }
+} 

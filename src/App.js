@@ -40,7 +40,7 @@ function App() {
                 }}>
                 </Route>
 
-                <Route path="/EditProduct" exact render={() => {
+                <Route path="/EditProduct/:id" exact render={() => {
                     return localStorage.getItem("token")  ? <EditProduct></EditProduct> : <Redirect to="/login"></Redirect>
                 }}>
                 </Route>
@@ -48,10 +48,7 @@ function App() {
                 <Route path="/AddProduct" exact render={() => {
                     return localStorage.getItem("token")  ? <AddProduct></AddProduct> : <Redirect to="/login"></Redirect>
                 }}>
-                </Route>
-
-                
-
+                </Route>           
                 <Route path="*">
                     <NotFoundPage />
                 </Route>

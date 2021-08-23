@@ -6,8 +6,6 @@ import { NavLink } from 'react-router-dom';
 
 function Header(props) {
     return (
-
-
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
             <Container>
                 <Nav>

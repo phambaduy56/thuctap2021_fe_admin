@@ -8,3 +8,4 @@ export const SEARCH_CATEGORY = 'SEARCH_CATEGORY';
 
 export const LIST_PRODUCT = 'LIST_PRODUCT';
 export const EDIT_PRODUCT = 'EDIT_PRODUCT';
+export const DELETE_PRODUCT = 'DELETE_PRODUCT';

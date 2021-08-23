@@ -2,6 +2,7 @@ import * as Types from './../constants/ActionType'
 
 var initialState = []
 
+
 const listCategory = (state=initialState, action) => {
     switch(action.type) {
         case Types.LIST_CATEGORY:  

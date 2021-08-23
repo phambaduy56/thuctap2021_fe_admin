@@ -6,11 +6,12 @@ import "./index.css"
 import { connect } from 'react-redux';
 import { listCategory } from './../../actions/index';
 import { useEffect } from 'react';
-import axios from 'axios';
+import axios from 'axios'
+import { isEmpty } from 'validate.js';
 
 function ListCategory(props) {
 
-
+    const [validationMsg, setvalidationMsg] = useState("")
     const [category, setCategory] = useState({
         name_category: '',
     })
@@ -22,6 +23,16 @@ function ListCategory(props) {
         status: '',
     })
 
+    const validateAll = () => {
+        const msg = {}
+        if (isEmpty(category.name_category)) {
+            msg.name_category = "không được để trống"
+        }
+        setvalidationMsg(msg)
+        if (Object.keys(msg).length > 0) return false
+        return true
+    };
+    
     const [search, setSearch] = useState({
         valueSearch: '',
     })
@@ -35,7 +46,6 @@ function ListCategory(props) {
 
     })
 
-    //tim san pham
     const findId = (id) => {
         var cate = props.listCategory.find((k) => k._id === id)
         return cate;
@@ -93,46 +103,51 @@ function ListCategory(props) {
         return result;
     }
 
+
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log(flag)
-        console.log(category)
-        if (flag._id) {
-            axios.put(`/api/putCategory/${flag._id}`, { status: flag.status, name_category: category.name_category })
-                .then(res => {
-                    console.log(res)
-                });
-            setCategory({
-                ...category,
-                name_category: '',
-            })
+        console.log('hello')
+        const isvalid = validateAll()
+        if (isvalid) {
+            if (flag._id) {
+                axios.put(`/api/putCategory/${flag._id}`, { status: flag.status, name_category: category.name_category })
+                    .then(res => {
+                        console.log(res)
+                    });
+                setCategory({
+                    ...category,
+                    name_category: '',
+                })
 
-            setFlag({
-                ...flag,
-                number: 0,
-                name_category: '',
-                _id: '',
-                status: '',
-            })
+                setFlag({
+                    ...flag,
+                    number: 0,
+                    name_category: '',
+                    _id: '',
+                    status: '',
+                })
+            }
+            if (!flag._id) {
+                axios.post('/api/postCategory', category)
+                    .then(res => {
+
+                    });
+                setCategory({
+                    ...category,
+                    name_category: '',
+                })
+
+                setFlag({
+                    ...flag,
+                    number: 0,
+                    name_category: '',
+                    _id: '',
+                    status: '',
+                })
+            }
         }
-        if (!flag._id) {
-            axios.post('/api/postCategory', category)
-                .then(res => {
 
-                });
-            setCategory({
-                ...category,
-                name_category: '',
-            })
 
-            setFlag({
-                ...flag,
-                number: 0,
-                name_category: '',
-                _id: '',
-                status: '',
-            })
-        }
     }
 
     const onHandleSearch = (e) => {
@@ -158,6 +173,7 @@ function ListCategory(props) {
                                         value={search.valueSearch}
                                         onChange={(e) => setSearch({ ...search, valueSearch: e.target.value })}
                                         placeholder="Tìm kiếm loại sản phẩm...." />
+
                                     <button type="button" className="btn btn-primary mr-10" onClick={onHandleSearch}>Tìm kiếm</button>
                                 </div>
                             </div>
@@ -191,6 +207,7 @@ function ListCategory(props) {
                                     value={category.name_category}
                                     onChange={(e) => setCategory({ ...category, name_category: e.target.value })}
                                 />
+                                <small className="form-text text-danger">{validationMsg.name_category}</small>
                             </div>
                             <br />
                             <button type="submit" className="btn btn-primary">
